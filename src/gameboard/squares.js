@@ -5,6 +5,7 @@ export class Square {
     this.coordX = x;
     this.coordY = y;
     this.status = 'vacant';
+    this.void = false;
     this.id = (() => {
       const transX = () => toAlpha(x);
       const transY = () => y + 1;
@@ -34,6 +35,10 @@ export class Square {
     this.status = 'missed';
   }
 
+  avoid() {
+    this.void = true;
+  }
+
   hasOccupant() {
     return this.occupant != undefined
   }
@@ -44,6 +49,10 @@ export class Square {
 
   isRevealed() {
     return this.status == 'revealed'
+  }
+
+  isReserved() {
+    return this.status == 'reserved'
   }
 
   adjacentSquares(squares) {
@@ -60,6 +69,6 @@ export class Square {
                          findSquare(squares, x+1, y+1)
                        ];
 
-    return adjSquares.filter(adj => adj !== undefined);
+    return adjSquares
   }
 }

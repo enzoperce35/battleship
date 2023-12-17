@@ -39,11 +39,19 @@ describe('toAlpha', () => {
 
 describe('findSquare', () => {
   test('return e10 square', () => {
-    expect(helper.findSquare(board.getSquares(), 4, 4)).toEqual({"coordX": 4, "coordY": 4, "id": "E5", "status": "vacant"})
+    expect(helper.findSquare(board.getSquares(), 4, 4)).toEqual({"coordX": 4, "coordY": 4, "id": "E5", "status": "vacant", "void": false})
   })
 
   test('return undefined for a non-existing square', () => {
     expect(helper.findSquare(board.getSquares(), 10, 4)).toBeUndefined()
+  })
+})
+
+describe('diffInPercentage', () => {
+  test('percentage', () => {
+    expect(helper.diffInPercentage(0, 86)).toEqual(0)
+    expect(helper.diffInPercentage(8, 86)).toEqual(9.30232558139535)
+    expect(helper.diffInPercentage(10, 86)).toEqual(11.627906976744185)
   })
 })
 
@@ -52,15 +60,5 @@ describe('findShip', () => {
     const Ship4 = board.getShips()[3];
 
     expect(helper.findShip(board, Ship4.id)).toEqual(Ship4)
-  })
-})
-
-describe('findSquares', () => {
- test('return 100 vacant squares', () => {
-    expect(helper.findSquares(board, 'vacant')).toHaveLength(100)
-  })
-
-  test('return no square for invalid status', () => {
-    expect(helper.findSquares(board, 'invalid_status')).toHaveLength(0)
   })
 })

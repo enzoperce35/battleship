@@ -17,6 +17,32 @@ export class Ship {
     return this.shipLength == this.hits
   }
 
+  getHints(board) {
+    let hints = [];
+
+    let shipSquares = board.getSquares('occupant', this.id).filter(sqr => sqr.status == 'hit')
+
+    for(let sqr of shipSquares) {
+      let adjacents = sqr.adjacentSquares(board.getSquares())
+
+      if (this.hits > 1) {
+        if(this.orientation == 'vertical') {
+          hints.push(adjacents.slice(2,4))
+        } else {
+          hints.push(adjacents.slice(0,2))
+        }
+      } else {
+        hints.push(adjacents.splice(0,4))
+      }
+    }
+
+    hints = hints.flat().filter(hint => !shipSquares.includes(hint));
+
+    hints.filter(hint => hint != undefined && !hint.void);
+
+    return hints
+  }
+
   findPosition(vacant_squares) {
     const self = this
 

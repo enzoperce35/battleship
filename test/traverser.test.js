@@ -7,7 +7,7 @@ describe('traverser', () => {
 
   beforeEach(() => {
     board = gameBoard();
-    vacantSquares = helper.findSquares(board, 'vacant');
+    vacantSquares = board.getSquares('status', 'vacant');
     squareH8 = vacantSquares[77];
     squareC3 = vacantSquares[22];
   })
@@ -43,9 +43,9 @@ describe('traverser', () => {
     vacantSquares.splice(12, 1);
 
     expect(edgeTraversal.descend()).toEqual([
-                                              {"coordX": 2, "coordY": 2, "id": "C3", "status": "vacant"},
+                                              {"coordX": 2, "coordY": 2, "id": "C3", "status": "vacant", "void": false},
                                               undefined,
-                                              {"coordX": 0, "coordY": 2, "id": "A3", "status": "vacant"},
+                                              {"coordX": 0, "coordY": 2, "id": "A3", "status": "vacant", "void": false},
                                               undefined
                                             ]);
   })
@@ -72,7 +72,7 @@ describe('traverser', () => {
     })
   })
 
-  test('return a ascending array that contains undefined item', () => {
+  test('return an ascending array that contains undefined item', () => {
     // make a vertical 4 step ascending traversal starting with square H8 and passing square H10
     const edgeTraversal = traverser(vacantSquares, squareH8, 'vertical', 4);
 
@@ -80,9 +80,9 @@ describe('traverser', () => {
     vacantSquares.splice(78, 1);
 
     expect(edgeTraversal.ascend()).toEqual([
-                                              {"coordX": 7, "coordY": 7, "id": "H8", "status": "vacant"},
+                                              {"coordX": 7, "coordY": 7, "id": "H8", "status": "vacant", "void": false},
                                               undefined,
-                                              {"coordX": 7, "coordY": 9, "id": "H10", "status": "vacant"},
+                                              {"coordX": 7, "coordY": 9, "id": "H10", "status": "vacant", "void": false},
                                               undefined
                                            ]);
   })

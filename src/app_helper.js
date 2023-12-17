@@ -17,12 +17,12 @@ function findSquare(squares, coordX, coordY) {
   )
 }
 
+function diffInPercentage(numA, numB) {
+  return (numA / numB) * 100
+}
+
 function findShip(board, shipId) {
   return board.getShips().find(ship => ship.id == shipId)
 }
 
-function findSquares(board, collectiveStatus) {
-  return board.getSquares().filter((sqr) => sqr.status == collectiveStatus);
-}
-
-export {getIds, randomSelect, toAlpha, findSquare, findShip, findSquares}
+export {getIds, randomSelect, toAlpha, findSquare, findShip, diffInPercentage}

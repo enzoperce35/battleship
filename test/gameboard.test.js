@@ -44,11 +44,11 @@ describe('positionShips', () => {
   board.positionShips();
 
   test('return 20 occupied squares', () => {
-    expect(helper.findSquares(board, 'occupied')).toHaveLength(20);
+    expect(board.getSquares('status', 'occupied')).toHaveLength(20);
   })
 
   test('return vacant squares', () => {
-    expect(helper.findSquares(board, 'vacant')).toEqual(expect.arrayContaining([
+    expect(board.getSquares('status', 'vacant')).toEqual(expect.arrayContaining([
       expect.objectContaining({
         status: 'vacant'
       })
@@ -56,7 +56,7 @@ describe('positionShips', () => {
   })
 
   test('return reserved squares', () => {
-    expect(helper.findSquares(board, 'reserved')).toEqual(expect.arrayContaining([
+    expect(board.getSquares('status', 'reserved')).toEqual(expect.arrayContaining([
       expect.objectContaining({
         status: 'reserved'
       })
@@ -64,46 +64,96 @@ describe('positionShips', () => {
   })
 })
 
+describe('collectHints', () => {
+  const board = gameBoard()
+  board.positionShips();
+
+  // 4 square ship
+  const ship4 = board.getShips()[0];
+  // 3 square ship
+  const ship3 = board.getShips()[1];
+  // 1 square ship
+  const ship1 = board.getShips()[9];
+
+  function attack(ship, num) {
+    let square = board.getSquares('occupant', ship.id)[num-1];
+
+    ship.hits += 1;
+    square.status = 'hit';
+  }
+
+  test('board must have no hints', () => {
+    expect(board.collectHints()).toHaveLength(0);
+  })
+
+  test('board must have 4 hints', () => {
+    attack(ship4, 1);
+
+    expect(board.collectHints()).toHaveLength(4)
+  })
+
+  test('board must have 2 hints', () => {
+    attack(ship4, 2);
+
+    expect(board.collectHints()).toHaveLength(2)
+  })
+
+  test('board must have 2 hints', () => {
+    attack(ship1, 1);
+
+    expect(board.collectHints()).toHaveLength(2)
+  })
+
+  test('board must have 6 hints', () => {
+    attack(ship3, 1);
+
+    expect(board.collectHints()).toHaveLength(6);
+  })
+})
+
 describe('receive attack', () => {
   function targetSquare(status) {
-    const squares = helper.findSquares(board, status);
+    const squares = board.getSquares('status', status);
 
     return helper.randomSelect(squares);
   }
 
-  test('must modify square status from vacant to missed', () => {
+  beforeEach(() => {
+    board.positionShips();
+  })
+
+  test('must void and modify square status from vacant to missed', () => {
     const vacant_square = targetSquare('vacant')
 
     board.receive_attack(vacant_square.coordX, vacant_square.coordY);
 
+    expect(vacant_square.void).toBeTruthy();
     expect(vacant_square.status).toBe('missed')
   })
 
-  test('must modify square status from occupied to hit', () => {
-    board.positionShips();
-
+  test('must void and modify square status from occupied to hit', () => {
     const occupied_square = targetSquare('occupied');
-    const square_occupant = helper.findShip(board, occupied_square.occupant);
 
     board.receive_attack(occupied_square.coordX, occupied_square.coordY);
 
+    expect(occupied_square.void).toBeTruthy();
     expect(occupied_square.status).toBe('hit');
   })
+})
 
-  describe('allShipsSunk', () => {
-    beforeEach(() => {
-      board.positionShips();
-    })
+describe('allShipsSunk', () => {
+  beforeEach(() => {
+    board.positionShips();
+  })
 
-    test('return false', () => {
-      expect(board.allShipsSunk()).toBeFalsy();
-    })
+  test('return false', () => {
+    expect(board.allShipsSunk()).toBeFalsy();
+  })
 
-    test('return true', () => {
-      // make all ships' hits to equal it's length
-      board.getShips().map(ship => ship.hits = ship.shipLength)
+  test('return true', () => {
+    // make all ships' hits to equal it's length
+    board.getShips().map(ship => ship.hits = ship.shipLength)
 
-      expect(board.allShipsSunk()).toBeTruthy();
-    })
+    expect(board.allShipsSunk()).toBeTruthy();
   })
 })
