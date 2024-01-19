@@ -65,51 +65,36 @@ describe('positionShips', () => {
 })
 
 describe('collectHints', () => {
-  const board = gameBoard()
-  board.positionShips();
+  const position_hints = [['F4', 'F5', 'F6', 'F7'], ['B4', 'B5', 'B6'], ['H2']];
+  let spies = [];
 
-  // 4 square ship
-  const ship4 = board.getShips()[0];
-  // 3 square ship
-  const ship3 = board.getShips()[1];
-  // 1 square ship
-  const ship1 = board.getShips()[9];
+  beforeEach(() => {
+    // select three ships
+    const ships = board.getShips().filter((_, i) => i == 0 || i == 1 || i == 9);
 
-  function attack(ship, num) {
-    let square = board.getSquares('occupant', ship.id)[num-1];
+    // spy filter function to return them
+    jest.spyOn(board.getShips(), 'filter').mockReturnValue(ships);
 
-    ship.hits += 1;
-    square.status = 'hit';
-  }
+    // spy on each three ships to return one set of hint
+    ships.forEach((ship, i) => {
+      let spy = jest.spyOn(ship, 'positionHints').mockReturnValue(position_hints[i]);
 
-  test('board must have no hints', () => {
-    expect(board.collectHints()).toHaveLength(0);
-  })
+      spies.push(spy);
+    });
+  });
 
-  test('board must have 4 hints', () => {
-    attack(ship4, 1);
+  it('calls positionHints for each ship', () => {
+    board.collectHints();
 
-    expect(board.collectHints()).toHaveLength(4)
-  })
+    spies.forEach(spy => {
+      expect(spy).toHaveBeenCalled();
+    });
+  });
 
-  test('board must have 2 hints', () => {
-    attack(ship4, 2);
-
-    expect(board.collectHints()).toHaveLength(2)
-  })
-
-  test('board must have 2 hints', () => {
-    attack(ship1, 1);
-
-    expect(board.collectHints()).toHaveLength(2)
-  })
-
-  test('board must have 6 hints', () => {
-    attack(ship3, 1);
-
-    expect(board.collectHints()).toHaveLength(6);
-  })
-})
+  it('return the position hints', () => {
+    expect(board.collectHints()).toEqual(position_hints.flat());
+  });
+});
 
 describe('receive attack', () => {
   function targetSquare(status) {
@@ -127,7 +112,6 @@ describe('receive attack', () => {
 
     board.receive_attack(vacant_square.coordX, vacant_square.coordY);
 
-    expect(vacant_square.void).toBeTruthy();
     expect(vacant_square.status).toBe('missed')
   })
 
@@ -136,7 +120,6 @@ describe('receive attack', () => {
 
     board.receive_attack(occupied_square.coordX, occupied_square.coordY);
 
-    expect(occupied_square.void).toBeTruthy();
     expect(occupied_square.status).toBe('hit');
   })
 })
@@ -144,7 +127,7 @@ describe('receive attack', () => {
 describe('allShipsSunk', () => {
   beforeEach(() => {
     board.positionShips();
-  })
+  });
 
   test('return false', () => {
     expect(board.allShipsSunk()).toBeFalsy();

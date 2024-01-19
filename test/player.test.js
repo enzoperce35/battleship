@@ -1,56 +1,69 @@
-import { player } from "../src/player";
-import * as helper from "../src/app_helper";
+import { Player } from "../src/player";
+import { SquarePicker } from "../src/gameboard/square_picker";
+import { randomSelect } from "../src/app_helper";
 
 let player1;
 let player2;
 
+jest.mock("../src/gameboard/square_picker")
+
 beforeEach(() => {
-  player1 = player();
-  player2 = player();
+  player1 = Player(true);
+  player2 = Player();
+});
+
+describe('getBoard', () => {
+  test('return player board', () => {
+    expect(player1.getBoard()).toBeDefined();
+    expect(player2.getBoard()).toBeDefined();
+  })
 })
 
-describe('player', () => {
-  test('return a defined player gameboard', () => {
-    expect(player1.board()).toBeDefined();
-    expect(player2.board()).toBeDefined();
+describe('hasAI', () => {
+  test('returns true if player has AI', () => {
+    expect(player1.hasAI()).toBeFalsy();
+    expect(player2.hasAI()).toBeTruthy();
+  })
+})
+
+describe('getIntel', () => {
+  test('return 5', () => {
+    expect(player2.getIntel()).toEqual(5);
+  })
+})
+
+describe('attack', () => {
+  let mockedActualModule;
+
+  beforeEach(() => {
+    // create a mocked version of the square_picker module
+    mockedActualModule = jest.requireActual("../src/gameboard/square_picker")
   })
 
-  describe('attack', () => {
-    test('call gameboard receive attack function', () => {
-      const square_c6 = player2.board().getSquares()[25];
+  function getSpy(pick) {
+    // get the mocked version of squarePicker
+    const picker = mockedActualModule.SquarePicker(player1.getBoard());
 
-      const spy = jest.spyOn(player2.board(), 'receive_attack');
+    // use it as the replacement for the original/unmocked SquarePicker of attack function
+    SquarePicker.mockImplementation(() => picker)
 
-      player1.attack(player2, square_c6);
+    // spy on it and one of it's return functions
+    return jest.spyOn(picker, pick)
+  }
 
-      expect(spy).toHaveBeenCalledWith(square_c6.coordX, square_c6.coordY);
-    })
+  test('make a manual attack', () => {
+    const spy = getSpy('manual').mockReturnValue(randomSelect(player2.getBoard().getSquares()));
+
+    player1.attack(player2);
+
+    expect(spy).toHaveBeenCalled();
   })
 
-  describe('auto attack', () => {
-    let square_c6;
+  test('make an auto attack', () => {
+    const spy = getSpy('auto');
 
-    test('attack square_c6 with very low percentage', () => {
-      square_c6 = player2.board().getSquares()[25];
-      square_c6.status = 'revealed';
+    player2.attack(player1);
 
-      jest.spyOn(helper, 'diffInPercentage').mockReturnValue(9);
-
-      player1.autoAttack(player2)
-
-      expect(square_c6.void).toBeFalsy();
-    })
-
-    test('attack square_c6 assuredly', () => {
-      square_c6 = player1.board().getSquares()[25];
-      square_c6.status = 'revealed';
-
-      jest.spyOn(helper, 'diffInPercentage').mockReturnValue(11);
-      jest.spyOn(player1.board(), 'collectHints').mockReturnValue([square_c6]);
-
-      player2.autoAttack(player1)
-
-      expect(square_c6.void).toBeTruthy();
-    })
+    expect(spy).toHaveBeenCalled();
   })
 })

@@ -10,56 +10,57 @@ beforeEach(() => {
 
 describe('Ship', () => {
   test('return ship id', () => {
-    expect(ship.id).toBe('ship3')
-  })
+    expect(ship.id).toBe('ship3');
+  });
 
   test('return ship length', () => {
     expect(ship.shipLength).toEqual(3);
   });
 
   test('return vertical or horizontal for ship orientation', () => {
-    expect(['vertical', 'horizontal']).toContain(ship.orientation)
-  })
+    expect(['vertical', 'horizontal']).toContain(ship.orientation);
+  });
 
   test('return ship hits', () => {
     expect(ship.hits).toBe(0);
-  })
-
+  });
 });
 
 describe('addHit', () => {
   test('ship hits should turn 1', () => {
     ship.addHit();
 
-    expect(ship.hits).toBe(1)
-  })
-})
+    expect(ship.hits).toBe(1);
+  });
+});
 
 describe('isSunk', () => {
-  test('ship should sink', () => {
-    for(let i = 0; i < 3; i++) {
-      ship.addHit()
-    }
+  test('return true', () => {
+    ship.hits = 3;
 
-    expect(ship.isSunk()).toBeTruthy()
-  })
-})
+    expect(ship.isSunk()).toBeTruthy();
+  });
 
-describe('getHints', () => {
+  test('return false', () => {
+    expect(ship.isSunk()).toBeFalsy();
+  });
+});
+
+describe('positionHints', () => {
   function attack(ship, square) {
     ship.hits += 1;
     square['occupant'] = ship.id;
     square.status = 'hit';
     square.void = true;
-  }
+  };
 
   function positionShip(board, ship, square, orientation) {
     jest.spyOn(helper, 'randomSelect').mockReturnValue(square);
 
-    ship.findPosition(board.getSquares())
+    ship.findPosition(board.getSquares());
 
     ship.orientation = orientation;
-  }
+  };
 
   describe('vertical', () => {
     let newShip = new Ship(4, 0);
@@ -69,30 +70,29 @@ describe('getHints', () => {
 
     // position ship to square E5
     beforeAll(() => {
-      positionShip(board, newShip, E5, 'vertical')
-    })
+      positionShip(board, newShip, E5, 'vertical');
+    });
 
     // make a first attack to square E5 where newship is positioned
     test('return 4 hints', () => {
-      attack(newShip, E5)
+      attack(newShip, E5);
 
-      expect(helper.getIds(newShip.getHints(board))).toEqual(["D5", "F5", "E4", "E6"])
-    })
+      expect(helper.getIds(newShip.positionHints(board))).toEqual(["D5", "F5", "E4", "E6"]);
+    });
 
     // make a second attack to square E8 where newship is positioned
     test('return 4 hints', () => {
-      attack(newShip, E8)
+      attack(newShip, E8);
 
-      expect(helper.getIds(newShip.getHints(board))).toEqual(["E4", "E6", "E7", "E9"])
-    })
-  })
+      expect(helper.getIds(newShip.positionHints(board))).toEqual(["E4", "E6", "E7", "E9"]);
+    });
+  });
 
   describe('horizontal', () => {
     let newShip = new Ship(4, 0);
     const board = gameBoard();
     const E5 = board.getSquares()[44];
     const F5 = board.getSquares()[54];
-    const G5 = board.getSquares()[64];
 
     // horizontally position ship to square E5
     beforeAll(() => {
@@ -103,15 +103,14 @@ describe('getHints', () => {
     test('return 4 hints', () => {
       attack(newShip, E5)
 
-      expect(helper.getIds(newShip.getHints(board))).toEqual(["D5", "F5", "E4", "E6"])
+      expect(helper.getIds(newShip.positionHints(board))).toEqual(["D5", "F5", "E4", "E6"])
     })
 
     // make a second attack to square G5 where newship is positioned
     test('return 4 hints', () => {
       attack(newShip, F5)
 
-      expect(helper.getIds(newShip.getHints(board))).toEqual(["D5", "G5"])
-      //expect(board.getSquares('occupant', newShip.id).filter(sqr => sqr.status == 'hit')).toEqual('test')
+      expect(helper.getIds(newShip.positionHints(board))).toEqual(["D5", "G5"])
     })
   })
 })
@@ -126,8 +125,8 @@ describe('findPosition', () => {
 
     newShip.orientation = shipOrientation;
 
-    return newShip
-  }
+    return newShip;
+  };
 
   describe('horizontal ship', () => {
 
@@ -177,19 +176,19 @@ describe('findPosition', () => {
     test('return an array of 2 ascending vertical square object', () => {
       ship = testShip(2, 'vertical');
 
-      expect(helper.getIds(ship.findPosition(squares))).toEqual(["C8", "C9"])
+      expect(helper.getIds(ship.findPosition(squares))).toEqual(["C8", "C9"]);
     })
 
     test('return an array of 3 ascending vertical square object', () => {
       ship = testShip(3, 'vertical');
 
-      expect(helper.getIds(ship.findPosition(squares))).toEqual(["C8", "C9", "C10"])
+      expect(helper.getIds(ship.findPosition(squares))).toEqual(["C8", "C9", "C10"]);
     })
 
     test('return an array of 4 descending vertical square object', () => {
       ship = testShip(4, 'vertical');
 
-      expect(helper.getIds(ship.findPosition(squares))).toEqual(["C8", "C7", "C6", "C5"])
-    })
-  })
-})
+      expect(helper.getIds(ship.findPosition(squares))).toEqual(["C8", "C7", "C6", "C5"]);
+    });
+  });
+});

@@ -3,32 +3,27 @@ import { Ship } from "../ships";
 import { findSquare } from "../app_helper";
 
 export function gameBoard() {
-  let boardSquares;
-  let boardShips;
 
-  (function generateSquares() {
-    let arr = [];
+  let boardSquares = (() => {
+    let squares = [];
 
     for(let x = 0; x < 10; x++) {
-
       for(let y = 0; y < 10; y++) {
-
-        arr.push(new Square(x, y))
+        squares.push(new Square(x, y));
       }
     }
 
-    boardSquares = arr
+    return squares
   })();
 
-  (function generateShips() {
+  let boardShips = (() => {
     let newShips = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 
     newShips.forEach((ship, i) => {
-
       newShips[i] = new Ship(ship, i);
     })
 
-    boardShips = newShips
+    return newShips
   })();
 
   function positionShips() {
@@ -36,7 +31,6 @@ export function gameBoard() {
       const vacant_squares = boardSquares.filter(sqr => sqr.status == 'vacant');
       const ship_positions = ship.findPosition(vacant_squares);
 
-      // this is to be implemented later using pubsub
       for (let square of ship_positions) {
         const adjSquares = square.adjacentSquares(vacant_squares).filter(adj => adj != undefined);
 
@@ -50,26 +44,21 @@ export function gameBoard() {
   };
 
   function receive_attack(x, y) {
-    let square = findSquare(boardSquares, x, y),
-      occupant = boardShips.find(ship => ship.id == square['occupant']);
+    const targetSquare = findSquare(boardSquares, x, y);
+    const targetShip = boardShips.find(ship => ship.id == targetSquare['occupant']);
+    const adjSquares = targetSquare.adjacentSquares(boardSquares).filter(adj => adj != undefined && !adj.void);
 
-    const adjSquares = square.adjacentSquares(boardSquares);
+    if (targetSquare.hasOccupant()) {
+      targetShip.addHit();
 
-    if (square.hasOccupant()) {
-      square.hit()
+      targetSquare.hit();
 
-      // this is to be implemented later using pubsub
-      occupant.addHit();
-
-      for(let adj of adjSquares) {
-        if (adj != undefined) adj.reveal();
-      }
+      adjSquares.forEach(adj => adj.reveal())
     } else {
-      square.missed();
+      targetSquare.missed();
     }
 
-    // this is to be implemented later using pubsub
-    square.avoid();
+    PubSub.publish('turn_done', targetSquare);
   }
 
   function allShipsSunk() {
@@ -91,7 +80,7 @@ export function gameBoard() {
     let hints = [];
 
     for(let ship of ships) {
-      hints.push(ship.getHints(this))
+      hints.push(ship.positionHints(this));
     }
 
     return hints.flat()

@@ -1,4 +1,5 @@
 import {toAlpha, findSquare} from "../app_helper";
+import PubSub from "pubsub-js";
 
 export class Square {
   constructor(x, y) {
@@ -12,6 +13,10 @@ export class Square {
 
       return transX() + transY();
     })();
+  }
+
+  static {
+    PubSub.subscribe('turn_done', (_, data) => data.avoid());
   }
 
   occupy(ship) {
@@ -40,35 +45,42 @@ export class Square {
   }
 
   hasOccupant() {
-    return this.occupant != undefined
+    return this.occupant != undefined;
   }
 
   isVacant() {
-    return this.status == 'vacant'
+    return this.status == 'vacant';
   }
 
   isRevealed() {
-    return this.status == 'revealed'
+    return this.status == 'revealed';
   }
 
   isReserved() {
-    return this.status == 'reserved'
+    return this.status == 'reserved';
+  }
+
+  wasHit() {
+    return this.status == 'hit';
+  }
+
+  wasMissed() {
+    return this.status == 'missed';
   }
 
   adjacentSquares(squares) {
     const x = this.coordX;
     const y = this.coordY;
-    const adjSquares = [
-                         findSquare(squares, x-1, y),
-                         findSquare(squares, x+1, y),
-                         findSquare(squares, x, y-1),
-                         findSquare(squares, x, y+1),
-                         findSquare(squares, x-1, y-1),
-                         findSquare(squares, x+1, y-1),
-                         findSquare(squares, x-1, y+1),
-                         findSquare(squares, x+1, y+1)
-                       ];
 
-    return adjSquares
+    return [
+      findSquare(squares, x-1, y),
+      findSquare(squares, x+1, y),
+      findSquare(squares, x, y-1),
+      findSquare(squares, x, y+1),
+      findSquare(squares, x-1, y-1),
+      findSquare(squares, x+1, y-1),
+      findSquare(squares, x-1, y+1),
+      findSquare(squares, x+1, y+1)
+    ];
   }
 }

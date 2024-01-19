@@ -17,12 +17,12 @@ export class Ship {
     return this.shipLength == this.hits
   }
 
-  getHints(board) {
+  positionHints(board) {
     let hints = [];
 
-    let shipSquares = board.getSquares('occupant', this.id).filter(sqr => sqr.status == 'hit')
+    let shipPosition = board.getSquares('occupant', this.id).filter(sqr => sqr.status == 'hit');
 
-    for(let sqr of shipSquares) {
+    for(let sqr of shipPosition) {
       let adjacents = sqr.adjacentSquares(board.getSquares())
 
       if (this.hits > 1) {
@@ -36,11 +36,10 @@ export class Ship {
       }
     }
 
-    hints = hints.flat().filter(hint => !shipSquares.includes(hint));
-
-    hints.filter(hint => hint != undefined && !hint.void);
-
-    return hints
+    return hints.flat().filter(hint =>
+                                        (hint != undefined && !hint.void) &&
+                                        !shipPosition.includes(hint)
+                                     );
   }
 
   findPosition(vacant_squares) {

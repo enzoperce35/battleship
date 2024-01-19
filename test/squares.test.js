@@ -4,100 +4,124 @@ import { Square } from "../src/gameboard/squares";
 import { Ship } from "../src/ships";
 
 describe('square', () => {
-  let square;
-  let ship;
+  let square_A10;
+  let ship1;
 
   beforeEach(() => {
-    square = new Square(0, 9);
-    ship = new Ship(4, 0);
+    square_A10 = new Square(0, 9);
+    ship1 = new Ship(4, 0);
   })
 
   test('return the right square object', () => {
-    expect(square).toEqual({"coordX": 0, "coordY": 9, "id": "A10", "status": "vacant", "void": false});
+    expect(square_A10).toEqual({"coordX": 0, "coordY": 9, "id": "A10", "status": "vacant", "void": false});
   })
 
   describe('occupy', () => {
     test('return the square with an occupied status and an added occupant key', () => {
-      square.occupy(ship);
+      square_A10.occupy(ship1);
 
-      expect(square).toEqual({"coordX": 0, "coordY": 9, "id": "A10", "occupant": "ship1", "status": "occupied", "void": false});
+      expect(square_A10).toEqual({"coordX": 0, "coordY": 9, "id": "A10", "occupant": "ship1", "status": "occupied", "void": false});
     })
   })
 
   describe('reserve', () => {
     test('return the square with a reserved status', () => {
-      square.reserve();
+      square_A10.reserve();
 
-      expect(square.status).toEqual('reserved');
+      expect(square_A10.status).toEqual('reserved');
     })
   })
 
   describe('reveal', () => {
     test('return the square with a revealed status', () => {
-      square.reveal();
+      square_A10.reveal();
 
-      expect(square.status).toEqual('revealed');
+      expect(square_A10.status).toEqual('revealed');
     })
   })
 
   describe('hit', () => {
     test('return the square with a hit status', () => {
-      square.hit();
+      square_A10.hit();
 
-      expect(square.status).toEqual('hit');
+      expect(square_A10.status).toEqual('hit');
     })
   })
 
   describe('missed', () => {
     test('return the square with a missed status', () => {
-      square.missed();
+      square_A10.missed();
 
-      expect(square.status).toEqual('missed');
+      expect(square_A10.status).toEqual('missed');
     })
   })
 
   describe('avoid', () => {
     test('void the square', () => {
-      square.avoid();
+      square_A10.avoid();
 
-      expect(square.void).toBeTruthy();
+      expect(square_A10.void).toBeTruthy();
     })
   })
 
   describe('hasOccupant', () => {
     test('return false', () => {
-      expect(square.hasOccupant()).toBeFalsy();
+      expect(square_A10.hasOccupant()).toBeFalsy();
     })
 
     test('return true', () => {
-      square.occupy(ship)
+      square_A10.occupy(ship1)
 
-      expect(square.hasOccupant()).toBeTruthy();
+      expect(square_A10.hasOccupant()).toBeTruthy();
     })
   })
 
   describe('isVacant', () => {
     test('return true', () => {
-      expect(square.isVacant()).toBeTruthy();
+      expect(square_A10.isVacant()).toBeTruthy();
     })
 
     test('return false', () => {
-      square.reserve()
+      square_A10.reserve()
 
-      expect(square.isVacant()).toBeFalsy();
+      expect(square_A10.isVacant()).toBeFalsy();
     })
   })
 
   describe('isRevealed', () => {
     test('return false', () => {
-      expect(square.isRevealed()).toBeFalsy();
+      expect(square_A10.isRevealed()).toBeFalsy();
     })
 
     test('return true', () => {
-      square.reveal()
+      square_A10.reveal();
 
-      expect(square.isRevealed()).toBeTruthy();
+      expect(square_A10.isRevealed()).toBeTruthy();
     })
+  })
+
+  describe('isReserved', () => {
+    test('return true', () => {
+      square_A10.reserve();
+
+      expect(square_A10.isReserved()).toBeTruthy();
+    });
+  })
+
+  describe('wasHit', () => {
+    test('return true', () => {
+      square_A10.hit();
+
+      expect(square_A10.wasHit()).toBeTruthy();
+    });
+  })
+
+  describe('wasMissed', () => {
+    test('return true', () => {
+      square_A10.missed();
+
+      expect(square_A10.wasMissed()).toBeTruthy();
+    });
   })
 
   describe('adjacentSquares', () => {

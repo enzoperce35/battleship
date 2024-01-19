@@ -1,37 +1,30 @@
 import { gameBoard } from "./gameboard/gameboard";
-import { randomSelect, diffInPercentage } from "./app_helper";
+import { SquarePicker } from "./gameboard/square_picker";
 
-export function player() {
-  let board;
+export function Player(human = false) {
+  let playerBoard = (() => gameBoard())();
+  let intel = 5;
 
-  function attack(opponent, square) {
-    opponent.board().receive_attack(square.coordX, square.coordY);
+  function hasAI() {
+    return !human;
   }
 
-  function autoAttack(opponent) {
-    const attack_hints = opponent.board().collectHints();
-    const active_squares = opponent.board().getSquares('void', false);
-    const revealed_squares = opponent.board().getSquares('status', 'revealed');
-    const num_difference = diffInPercentage(revealed_squares.length, active_squares.length);
+  async function attack(opponent) {
+    let pick = SquarePicker(opponent.getBoard());
 
-    const square = (() => {
-      if (num_difference > 10) {
-        return randomSelect(attack_hints);
-      } else {
-        return randomSelect(active_squares);
-      }
+    let square = await (() => {
+      return hasAI() ? pick.auto(this.getIntel()) : pick.manual();
     })();
 
-    opponent.board().receive_attack(square.coordX, square.coordY);
+    opponent.getBoard().receive_attack(square.coordX, square.coordY);
   }
 
-  (() => {
-    board = gameBoard()
-  })();
+  (() => playerBoard.positionShips())();
 
   return {
-    board: () => board,
+    getIntel: () => intel,
+    getBoard: () => playerBoard,
+    hasAI,
     attack,
-    autoAttack,
   }
 }

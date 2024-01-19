@@ -1,5 +1,5 @@
 function getIds(arr) {
-  return arr.map(obj => obj.id)
+  return arr.map(obj => obj.id);
 }
 
 function randomSelect(arr) {
@@ -22,7 +22,14 @@ function diffInPercentage(numA, numB) {
 }
 
 function findShip(board, shipId) {
-  return board.getShips().find(ship => ship.id == shipId)
+  return board.getShips().find(ship => ship.id == shipId);
 }
 
-export {getIds, randomSelect, toAlpha, findSquare, findShip, diffInPercentage}
+export {
+  getIds,
+  randomSelect,
+  toAlpha,
+  findSquare,
+  findShip,
+  diffInPercentage,
+};
