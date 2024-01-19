@@ -1,19 +1,20 @@
-import { createEl } from "../../src/dom/dom_helper";
-import { viewUpdate } from "../../src/dom/view_updater"
-import { Game } from "../../src/game";
-import { Player } from "../../src/player";
+import { createEl } from '../../src/dom/dom_helper';
+import { ViewUpdate } from '../../src/dom/view_updater';
+import { Game } from '../../src/game';
+import { Player } from '../../src/player';
 
-document.body.append(createEl('main'),
-                     createEl('game-display'));
+document.body.append(
+  createEl('main'),
+  createEl('game-display'),
+);
 
-let game = new Game(Player(true), Player());
-let update = new viewUpdate(game);
+const game = new Game(Player(true), Player());
+const update = new ViewUpdate(game);
 
 describe('viewUpdate', () => {
-
   describe('updateMain', () => {
     test('update main three times', () => {
-      const spy = jest.spyOn(update.main, 'appendChild')
+      const spy = jest.spyOn(update.main, 'appendChild');
 
       update.updateMain();
 
@@ -27,7 +28,7 @@ describe('viewUpdate', () => {
 
       expect(spy).toHaveBeenCalledWith(game.player1, 1);
       expect(spy).toHaveBeenCalledWith(game.player2, 2);
-    })
+    });
 
     test('update status board', () => {
       const spy = jest.spyOn(update.display, 'statusBoard');
@@ -40,7 +41,7 @@ describe('viewUpdate', () => {
 
   describe('updateDisplay', () => {
     test('update view', () => {
-      const spy = jest.spyOn(update.view, 'appendChild')
+      const spy = jest.spyOn(update.view, 'appendChild');
 
       update.updateDisplay();
 
@@ -48,7 +49,7 @@ describe('viewUpdate', () => {
     });
 
     test('update game result', () => {
-      const spy = jest.spyOn(update.display, 'gameResult')
+      const spy = jest.spyOn(update.display, 'gameResult');
 
       update.updateDisplay();
 

@@ -1,9 +1,9 @@
 function getIds(arr) {
-  return arr.map(obj => obj.id);
+  return arr.map((obj) => obj.id);
 }
 
 function randomSelect(arr) {
-  return arr[Math.floor(Math.random()*arr.length)];
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function toAlpha(i) {
@@ -11,18 +11,16 @@ function toAlpha(i) {
 }
 
 function findSquare(squares, coordX, coordY) {
-  return squares.find((sqr) =>
-    sqr.coordX == coordX &&
-    sqr.coordY == coordY
-  )
+  return squares.find((sqr) => sqr.coordX === coordX
+    && sqr.coordY === coordY);
 }
 
 function diffInPercentage(numA, numB) {
-  return (numA / numB) * 100
+  return (numA / numB) * 100;
 }
 
 function findShip(board, shipId) {
-  return board.getShips().find(ship => ship.id == shipId);
+  return board.getShips().find((ship) => ship.id === shipId);
 }
 
 export {

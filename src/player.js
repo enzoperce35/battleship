@@ -1,22 +1,20 @@
-import { gameBoard } from "./gameboard/gameboard";
-import { SquarePicker } from "./gameboard/square_picker";
+import { gameBoard } from './gameboard/gameboard';
+import { SquarePicker } from './gameboard/square_picker';
 
 export function Player(human = false) {
-  let playerBoard = (() => gameBoard())();
-  let intel = 5;
+  const playerBoard = (() => gameBoard())();
+  const intel = 5;
 
   function hasAI() {
     return !human;
   }
 
   async function attack(opponent) {
-    let pick = SquarePicker(opponent.getBoard());
+    const pick = SquarePicker(opponent.getBoard());
 
-    let square = await (() => {
-      return hasAI() ? pick.auto(this.getIntel()) : pick.manual();
-    })();
+    const square = await (() => (hasAI() ? pick.auto(this.getIntel()) : pick.manual()))();
 
-    opponent.getBoard().receive_attack(square.coordX, square.coordY);
+    opponent.getBoard().receiveAttack(square.coordX, square.coordY);
   }
 
   (() => playerBoard.positionShips())();
@@ -26,5 +24,5 @@ export function Player(human = false) {
     getBoard: () => playerBoard,
     hasAI,
     attack,
-  }
+  };
 }

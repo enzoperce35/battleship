@@ -1,10 +1,10 @@
 export function createEl(elId = '', elClass = '', el = 'div') {
-  let element = document.createElement(el);
+  const element = document.createElement(el);
 
-  if (elId != '') element.id = elId;
-  if (elClass != '') element.className = elClass;
+  if (elId !== '') element.id = elId;
+  if (elClass !== '') element.className = elClass;
 
-  return element
+  return element;
 }
 
 export function clear(element) {
@@ -12,5 +12,5 @@ export function clear(element) {
     element.removeChild(element.lastChild);
   }
 
-  return element
+  return element;
 }

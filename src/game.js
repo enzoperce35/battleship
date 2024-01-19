@@ -1,4 +1,4 @@
-import PubSub from "pubsub-js";
+import PubSub from 'pubsub-js';
 
 export class Game {
   constructor(p1, p2) {
@@ -13,15 +13,15 @@ export class Game {
     return [this.player1, this.player2];
   }
 
-  switchTurn(last_attack) {
-    let attacker = this.attacker;
-    let receiver = this.receiver;
+  switchTurn(lastAttack) {
+    const { attacker } = this;
+    const { receiver } = this;
 
-    if (last_attack.wasMissed()) {
+    if (lastAttack.wasMissed()) {
       this.attacker = receiver;
       this.receiver = attacker;
     }
-  };
+  }
 
   takeTurn() {
     // prepare game view
@@ -36,7 +36,7 @@ export class Game {
     if (this.receiver.getBoard().allShipsSunk()) {
       this.over = true;
 
-      PubSub.publish('game_over', this)
+      PubSub.publish('game_over', this);
     }
   }
 
@@ -44,15 +44,15 @@ export class Game {
     const self = this;
 
     function turn() {
-      return new Promise(function(resolve) {
+      return new Promise((resolve) => {
         self.takeTurn();
 
-        PubSub.subscribe('turn_done', (_, last_attack) => resolve(last_attack));
-      }
-    )}
+        PubSub.subscribe('turn_done', (_, lastAttack) => resolve(lastAttack));
+      });
+    }
 
-    while(!this.over) {
-      await turn().then(data => this.switchTurn(data));
-    };
-  };
+    while (!this.over) {
+      await turn().then((data) => this.switchTurn(data));
+    }
+  }
 }

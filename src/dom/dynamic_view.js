@@ -1,12 +1,12 @@
-import { viewUpdate } from "./view_updater";
-import PubSub from "pubsub-js";
+import PubSub from 'pubsub-js';
+import { ViewUpdate } from './view_updater';
 
-export let dynamic_view = (() => {
+export const dynamicView = (() => {
   PubSub.subscribe('new_turn', (_, game) => {
-    new viewUpdate(game).updateMain();
-  })
+    new ViewUpdate(game).updateMain();
+  });
 
   PubSub.subscribe('game_over', (_, game) => {
-    new viewUpdate(game).updateDisplay()
-  })
+    new ViewUpdate(game).updateDisplay();
+  });
 })();

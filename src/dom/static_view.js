@@ -1,10 +1,10 @@
-import { createEl } from "./dom_helper";
+import { createEl } from './dom_helper';
 
-let view = createEl('container');
-let main = createEl('main');
+const view = createEl('container');
+const main = createEl('main');
 
-export let static_view = (() => {
+export const staticView = (() => {
   view.append(main);
 
-  document.body.appendChild(view)
+  document.body.appendChild(view);
 })();

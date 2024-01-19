@@ -1,7 +1,7 @@
-import { Display } from "../../src/dom/display";
-import { Square } from "../../src/gameboard/squares";
-import { Player } from "../../src/player";
-import { Game } from "../../src/game";
+import { Display } from '../../src/dom/display';
+import { Square } from '../../src/gameboard/squares';
+import { Player } from '../../src/player';
+import { Game } from '../../src/game';
 
 describe('Display', () => {
   const display = new Display();
@@ -10,11 +10,11 @@ describe('Display', () => {
     const player = new Player();
     const board = player.getBoard();
 
-    const unique_status_squares = (() => {
-      let squares = ['vacant', 'hit', 'missed', 'revealed'];
+    const uniqueStatusSquares = (() => {
+      const squares = ['vacant', 'hit', 'missed', 'revealed'];
 
-      return squares.map(function (stat, i) {
-        let sqr = new Square(0, i);
+      return squares.map((stat, i) => {
+        const sqr = new Square(0, i);
 
         sqr.status = stat;
 
@@ -24,13 +24,13 @@ describe('Display', () => {
 
     function squareColor(id) {
       return document.getElementById(id).style.backgroundColor;
-    };
+    }
 
     test('return a multi-colored gameboard', () => {
-      jest.spyOn(board, 'getSquares').mockReturnValue(unique_status_squares)
+      jest.spyOn(board, 'getSquares').mockReturnValue(uniqueStatusSquares);
 
-      const game_board = display.gameBoard(player, 2);
-      document.body.append(game_board);
+      const gameBoard = display.gameBoard(player, 2);
+      document.body.append(gameBoard);
 
       expect(squareColor('A1')).toEqual('gray');
       expect(squareColor('A2')).toEqual('red');
@@ -40,7 +40,7 @@ describe('Display', () => {
   });
 
   describe('gameResult', () => {
-    let game = new Game(Player(true), Player());
+    const game = new Game(Player(true), Player());
     game.over = true;
 
     it('returns a game over message', () => {
@@ -62,7 +62,7 @@ describe('Display', () => {
 
   describe('statusBoard', () => {
     test('return a container with the game title', () => {
-      document.body.appendChild(display.statusBoard())
+      document.body.appendChild(display.statusBoard());
 
       expect(document.body.innerHTML).toContain('<div id="game-display"><h1 id="game-title">BattleShip</h1></div>');
     });

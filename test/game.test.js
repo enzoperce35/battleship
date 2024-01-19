@@ -1,7 +1,7 @@
-import PubSub from "pubsub-js";
-import { Game } from "../src/game";
-import { Player } from "../src/player";
-import { randomSelect } from "../src/app_helper";
+import PubSub from 'pubsub-js';
+import { Game } from '../src/game';
+import { Player } from '../src/player';
+import { randomSelect } from '../src/app_helper';
 
 let game;
 let pubsub_spy;
@@ -10,40 +10,40 @@ beforeEach(() => {
   game = new Game(Player(true), Player());
 
   pubsub_spy = jest.spyOn(PubSub, 'publish');
-})
+});
 
 describe('players', () => {
   test('return two players', () => {
     expect(game.players()).toEqual([game.player1, game.player2]);
-  })
+  });
 });
 
 describe('switchTurn', () => {
   function attack(result) {
-    let attacked_square = randomSelect(game.receiver.getBoard().getSquares());
+    const attackedSquare = randomSelect(game.receiver.getBoard().getSquares());
 
-    attacked_square.status = result;
+    attackedSquare.status = result;
 
-    return attacked_square;
+    return attackedSquare;
   }
 
   test('attacker must switch', () => {
-    const attacker = game.attacker;
-    const attacked_square = attack('missed')
+    const { attacker } = game;
+    const attackedSquare = attack('missed');
 
-    game.switchTurn(attacked_square);
+    game.switchTurn(attackedSquare);
 
     expect(game.attacker).not.toBe(attacker);
-  })
+  });
 
   test('attacker must not switch', () => {
-    const attacker = game.attacker;
-    const attacked_square = attack('hit')
+    const { attacker } = game;
+    const attackedSquare = attack('hit');
 
-    game.switchTurn(attacked_square);
+    game.switchTurn(attackedSquare);
 
     expect(game.attacker).toBe(attacker);
-  })
+  });
 });
 
 describe('takeTurn', () => {
@@ -56,7 +56,7 @@ describe('takeTurn', () => {
   });
 
   test('call player.attack', () => {
-    const receiver = game.receiver;
+    const { receiver } = game;
 
     const spy = jest.spyOn(game.attacker, 'attack');
 

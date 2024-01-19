@@ -1,54 +1,52 @@
-import { createEl } from "./dom_helper";
+import { createEl } from './dom_helper';
 
 export class Display {
-
   gameBoard(player, i) {
-    let playerSquares = player.getBoard().getSquares();
-    let board = createEl(`p${i}-board`, 'boards');
+    const playerSquares = player.getBoard().getSquares();
+    const board = createEl(`p${i}-board`, 'boards');
 
     function addColor(display, sqr) {
-      let color = () => {
+      const color = () => {
         if (sqr.wasHit()) {
           return 'red';
         }
-        else if (sqr.wasMissed()) {
+        if (sqr.wasMissed()) {
           return 'none';
         }
-        else if (sqr.isRevealed()) {
+        if (sqr.isRevealed()) {
           return 'orange';
         }
-        else {
-          return 'gray';
-        };
+
+        return 'gray';
       };
 
       display.style.backgroundColor = color();
-    };
+    }
 
-    for (let square of playerSquares) {
-      let displaySquare = createEl(square.id, `p${i}-squares squares`, 'span');
+    playerSquares.forEach((square) => {
+      const displaySquare = createEl(square.id, `p${i}-squares squares`, 'span');
 
       if (!square.void) displaySquare.classList.add('active');
 
       addColor(displaySquare, square);
 
       board.appendChild(displaySquare);
-    }
+    });
 
-    return board
+    return board;
   }
 
   gameResult(game) {
-    let container = createEl('game-over');
+    const container = createEl('game-over');
 
-    let game_over = (() => {
+    const gameOver = (() => {
       const el = createEl('GO-1', '', 'h1');
       el.innerHTML = 'Game Over';
 
       return el;
     })();
 
-    let game_winner = (() => {
+    const gameWinner = (() => {
       const el = createEl('GO-2', '', 'h1');
 
       el.innerHTML = (() => {
@@ -60,24 +58,24 @@ export class Display {
       return el;
     })();
 
-    container.append(game_over, game_winner);
+    container.append(gameOver, gameWinner);
 
     return container;
   }
 
   statusBoard() {
-    let container = createEl('game-display');
+    const container = createEl('game-display');
 
-    let game_title = () => {
-      let gameTitle = createEl('game-title', '', 'h1');
+    const gameTitle = () => {
+      const gameTitle = createEl('game-title', '', 'h1');
 
       gameTitle.innerHTML = 'BattleShip';
 
       return gameTitle;
     };
 
-    container.appendChild(game_title());
+    container.appendChild(gameTitle());
 
     return container;
-  };
-};
+  }
+}

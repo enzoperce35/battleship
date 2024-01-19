@@ -1,4 +1,4 @@
-import { createEl, clear } from "../../src/dom/dom_helper";
+import { createEl, clear } from '../../src/dom/dom_helper';
 
 describe('createEl', () => {
   it('creates html element', () => {
