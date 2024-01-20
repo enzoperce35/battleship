@@ -3,7 +3,10 @@ import { ViewUpdate } from './view_updater';
 
 export const dynamicView = (() => {
   PubSub.subscribe('new_turn', (_, game) => {
-    new ViewUpdate(game).updateMain();
+    const update = new ViewUpdate(game);
+
+    update.updateMain();
+    update.highlightReceiver();
   });
 
   PubSub.subscribe('game_over', (_, game) => {

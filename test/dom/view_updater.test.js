@@ -39,6 +39,20 @@ describe('viewUpdate', () => {
     });
   });
 
+  describe('highlightReceiver', () => {
+    document.body.append(createEl('p1-board'), createEl('p2-board'));
+
+    it('highlights the receiver board', () => {
+      update.highlightReceiver();
+
+      const attackerBoard = document.getElementById('p1-board');
+      const receiverBoard = document.getElementById('p2-board');
+
+      expect(Number(attackerBoard.style.opacity)).not.toEqual(1);
+      expect(Number(receiverBoard.style.opacity)).toEqual(1);
+    });
+  });
+
   describe('updateDisplay', () => {
     test('update view', () => {
       const spy = jest.spyOn(update.view, 'appendChild');

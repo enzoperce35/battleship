@@ -19,6 +19,18 @@ export class ViewUpdate {
     this.main.appendChild(this.display.gameBoard(p1, 1));
   }
 
+  highlightReceiver() {
+    const receiverBoard = (() => {
+      if (this.game.receiver === this.game.player1) {
+        return 'p1-board';
+      }
+
+      return 'p2-board';
+    })();
+
+    document.getElementById(receiverBoard).style.opacity = 1;
+  }
+
   updateDisplay() {
     this.view.appendChild(this.display.gameResult(this.game));
   }
